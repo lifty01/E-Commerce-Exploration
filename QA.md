@@ -5,7 +5,7 @@ Initially, when looking and playing around with the data, I knew that I wanted t
 
 Describe your QA process and include the SQL queries used to execute it.
 
-Checking if similarly named columns have matches results
+Checking if similarly named columns have matched results
 select sr.total_ordered, sbs.total_ordered, p.orderedquantity, an.units_sold, alls.productquantity
 from sales_report sr
 full outer join sales_by_sku sbs
@@ -30,7 +30,28 @@ on alls.fullvisitorid = an.fullvisitorid and alls.productprice = an.unit_price
 where sr.total_ordered <> sbs.total_ordered
 order by sr.total_ordered asc
 
-With these two queries I found that the "total_ordered" colums in the "sales_by_sku" table was the one I most trusted to be of "total products ordered by customers" and that had more available values when comparing the same column to the "sales_report" table. I did the same when comparing productprice and unit_price from the analytics and all_sessions tables.
+With these two queries I found that the "total_ordered" colums in the "sales_by_sku" table was the one I most trusted to be of "total products ordered by customers" and that had more available values when comparing the same column to the "sales_report" table. I did the same when comparing productprice and unit_price from the analytics and all_sessions tables. Below is 1 example of 3 queries I used to check how many rows I would obtain by comparing two similar columns by not matching, by NULLS and by matching.
+
+select sr.total_ordered, sbs.total_ordered
+from sales_report sr
+full outer join sales_by_sku sbs
+on sr.productsku = sbs.productsku
+where sr.total_ordered <> sbs.total_ordered
+
+select sr.total_ordered, sbs.total_ordered
+from sales_report sr
+full outer join sales_by_sku sbs
+on sr.productsku = sbs.productsku
+where sr.total_ordered is null
+
+select sr.total_ordered, sbs.total_ordered
+from sales_report sr
+full outer join sales_by_sku sbs
+on sr.productsku = sbs.productsku
+where sr.productsku = sbs.productsku 
+
+
+
 
 Checking duplicates from the analytics table (The same query structure was used for most tables and columns. I only had to switch the names of the columns and tables I was checking on.)
 select visitnumber, visitid, fullvisitorid, unit_price, count(*) as total
